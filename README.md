@@ -205,6 +205,7 @@ version is the image's digest.
     ```            
 
 * `additional_tags`: *Optional.* Path to a space separated list of tags. The Docker build will additionally be pushed with those tags.
+* `no_cache`: *Optional.* Flag whether or not to apply --no-cache option for docker build.
 
 ## Example
 

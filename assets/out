@@ -61,6 +61,7 @@ additional_tags=$(jq -r '.params.additional_tags // ""' < $payload)
 need_tag_as_latest=$(jq -r '.params.tag_as_latest // "false"' < $payload)
 build_args=$(jq -r '.params.build_args // {}' < $payload)
 build_args_file=$(jq -r '.params.build_args_file // ""' < $payload)
+no_cache="$(jq -r '.params.no_cache // false' < $payload)"
 
 
 tag_name=""
@@ -182,7 +183,12 @@ elif [ -n "$build" ]; then
     done    
   fi
 
-  docker build -t "${repository}:${tag_name}" "${expanded_build_args[@]}" -f "$dockerfile" $cache_from "$build"
+  if [ "$no_cache" = "true" ]; then
+    docker build -t "${repository}:${tag_name}" "${expanded_build_args[@]}" -f "$dockerfile" $cache_from "$build" --no-cache 
+  else
+    docker build -t "${repository}:${tag_name}" "${expanded_build_args[@]}" -f "$dockerfile" $cache_from "$build"
+  fi
+
 elif [ -n "$load_file" ]; then
   if [ -n "$load_repository" ]; then
     docker load -i "$load_file"
